@@ -1,0 +1,4 @@
+releases:
+- name: sample-net6-api-local-k8
+  chart: ./helm_local
+  installed: false

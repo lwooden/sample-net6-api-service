@@ -12,8 +12,7 @@
     "sample_net6_api_service": {
       "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "swagger",
-      "applicationUrl": "http://localhost:5068",
+      "applicationUrl": "http://localhost:58739",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }

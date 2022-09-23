@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  {{- if eq .Release.Namespace "default" }}
+  name: sample-net6-api
+  {{ else }}
+  name: "sample-net6-api-{{ .Release.Namespace }}"
+  {{- end }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- if eq .Release.Namespace "default" }}
+      app: sample-net6-api
+      {{ else }}
+      app: "sample-net6-api-{{ .Release.Namespace }}"
+      {{- end }}
+      version: v1
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+         {{- if eq .Release.Namespace "default"}}
+         app: sample-net6-api
+         {{ else }}
+         app: "sample-net6-api-{{ .Release.Namespace }}"
+         {{- end }}
+         version: v1
+    spec:
+      containers:
+        {{- if eq .Release.Namespace "default"}}
+        - name: sample-net6-api
+        {{ else }}
+        - name: "sample-net6-api-{{ .Release.Namespace }}"
+        {{- end }}
+          image: {{ .Values.image.repository }}
+          env:
+            - name: NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: POD_SERVICE
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.serviceAccountName
+          envFrom:
+            - configMapRef:
+                name: {{ .Values.configMap.name }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.port }}
+
