@@ -98,7 +98,13 @@ app.MapPost("/api/sum", ([FromBody] Sum sum) =>
 // async example w/ deserialization into a Pokemon object
 app.MapGet("/api/pokemon", async (HttpClient http) =>
 {
-    var response = await http.GetFromJsonAsync<Pokemon>("https://pokeapi.co/api/v2/pokemon/ditto");
+    var rand = new Random();
+    var id = rand.Next(100);
+    string idString = id.ToString();
+    Console.WriteLine(idString);
+    var url = $"https://pokeapi.co/api/v2/pokemon/{idString}";
+
+    var response = await http.GetFromJsonAsync<Pokemon>(url);
     Console.WriteLine(response.Id);
     return Results.Ok(response);
 });
